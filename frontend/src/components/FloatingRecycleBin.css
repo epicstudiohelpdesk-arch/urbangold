@@ -1,0 +1,233 @@
+.floating-recycle-bin {
+    position: fixed;
+    right: clamp(0.6rem, 2.1vw, 2rem);
+    bottom: clamp(0.85rem, 2.6vw, 2.4rem);
+    width: clamp(44px, 6.5vw, 82px);
+    z-index: 70;
+    pointer-events: auto;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background: transparent;
+    line-height: 0;
+    appearance: none;
+    opacity: 0.95;
+    animation: ugRecycleFloat 6.2s ease-in-out infinite;
+    --bin-yellow: #f7c62b;
+    --bin-yellow-deep: #f0b323;
+    --bin-dark: #1a1a1a;
+    --bin-dark-deep: #0f0f0f;
+    --bin-stroke: #151515;
+    --bin-white: #f7f4ef;
+    --bin-waste: #1f8a70;
+    --bin-waste-deep: #0e5c49;
+    --bin-waste-alt: #2c9b8c;
+    --bin-waste-alt-deep: #1b6d64;
+    --bin-waste-stroke: rgba(7, 39, 32, 0.7);
+    --bin-waste-chip: #e6f7ef;
+}
+
+.floating-recycle-bin:focus-visible {
+    outline: 3px solid rgba(16, 185, 129, 0.55);
+    outline-offset: 4px;
+}
+
+.floating-recycle-bin__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    background: rgba(8, 20, 16, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(0px);
+    transition: opacity 220ms ease, backdrop-filter 240ms ease;
+}
+
+.floating-recycle-bin__backdrop--active {
+    opacity: 1;
+    pointer-events: auto;
+    backdrop-filter: blur(6px);
+}
+
+body.ug-modal-open .floating-recycle-bin {
+    z-index: 30;
+    pointer-events: none;
+}
+
+body.ug-modal-open .floating-recycle-bin__backdrop {
+    z-index: 25;
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(0px);
+}
+
+.dark .floating-recycle-bin {
+    --bin-yellow: #eebd2a;
+    --bin-yellow-deep: #e0a51e;
+    --bin-dark: #0d0d0d;
+    --bin-dark-deep: #070707;
+    --bin-stroke: #101010;
+    --bin-white: #f3efe8;
+    --bin-waste: #1a8b6f;
+    --bin-waste-deep: #0c5a47;
+    --bin-waste-alt: #2e9e8f;
+    --bin-waste-alt-deep: #177366;
+    --bin-waste-stroke: rgba(5, 28, 22, 0.8);
+    --bin-waste-chip: #dff4eb;
+    opacity: 0.88;
+}
+
+.floating-recycle-bin__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: rotate(-3deg);
+    transform-origin: 85% 85%;
+    filter: drop-shadow(0 16px 26px rgba(15, 23, 42, 0.22));
+    overflow: visible;
+}
+
+.floating-recycle-bin__group {
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.floating-recycle-bin__lid-group {
+    transform-box: fill-box;
+    transform-origin: 18% 25%;
+    transition: transform 280ms ease;
+}
+
+.floating-recycle-bin--open .floating-recycle-bin__lid-group {
+    transform: rotate(-18deg) translateY(-2px);
+}
+
+.floating-recycle-bin__shadow {
+    fill: rgba(15, 23, 42, 0.22);
+    filter: blur(2px);
+}
+
+.floating-recycle-bin__lid {
+    fill: var(--bin-yellow);
+    stroke: var(--bin-stroke);
+    stroke-width: 3;
+}
+
+.floating-recycle-bin__lid-top {
+    fill: rgba(255, 255, 255, 0.35);
+}
+
+.floating-recycle-bin__lid-shadow {
+    fill: rgba(0, 0, 0, 0.06);
+}
+
+.floating-recycle-bin__body {
+    fill: url(#binBodyFill);
+    stroke: var(--bin-stroke);
+    stroke-width: 3;
+}
+
+.floating-recycle-bin__side {
+    fill: url(#binSideFill);
+    stroke: var(--bin-stroke);
+    stroke-width: 2;
+}
+
+.floating-recycle-bin__body-sheen {
+    fill: url(#binBodySheen);
+    mix-blend-mode: screen;
+    opacity: 0.85;
+}
+
+.floating-recycle-bin__label {
+    fill: var(--bin-white);
+    stroke: var(--bin-stroke);
+    stroke-width: 2.5;
+}
+
+.floating-recycle-bin__rim {
+    fill: none;
+    stroke: var(--bin-stroke);
+    stroke-width: 3;
+}
+
+.floating-recycle-bin__edge {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.2);
+    stroke-width: 1.5;
+}
+
+.floating-recycle-bin__waste {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    transform-origin: 50% 90%;
+    transition: opacity 220ms ease, transform 320ms ease;
+}
+
+.floating-recycle-bin--open .floating-recycle-bin__waste {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 120ms;
+}
+
+.floating-recycle-bin__waste-stack {
+    fill: url(#wasteFill);
+    stroke: var(--bin-waste-stroke);
+    stroke-width: 1.6;
+}
+
+.floating-recycle-bin__waste-stack--b {
+    fill: url(#wasteFillAlt);
+}
+
+.floating-recycle-bin__waste-chip {
+    fill: var(--bin-waste-chip);
+    stroke: var(--bin-waste-stroke);
+    stroke-width: 1.2;
+}
+
+.floating-recycle-bin__symbol use {
+    fill: #fff;
+    stroke: var(--bin-stroke);
+    stroke-width: 1.8;
+}
+
+@keyframes ugRecycleFloat {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(0, -10px, 0);
+    }
+}
+
+@media (max-width: 900px) {
+    .floating-recycle-bin {
+        width: clamp(40px, 11vw, 74px);
+        opacity: 0.9;
+    }
+
+    .floating-recycle-bin__svg {
+        transform: rotate(-2deg);
+    }
+}
+
+@media (max-width: 640px) {
+    .floating-recycle-bin {
+        width: clamp(36px, 15vw, 66px);
+        opacity: 0.84;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-recycle-bin {
+        animation: none;
+    }
+
+    .floating-recycle-bin__lid-group,
+    .floating-recycle-bin__waste,
+    .floating-recycle-bin__backdrop {
+        transition: none;
+    }
+}

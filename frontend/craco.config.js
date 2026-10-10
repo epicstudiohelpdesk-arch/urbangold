@@ -46,7 +46,7 @@ const webpackConfig = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-    configure: (webpackConfig) => {
+    configure: (webpackConfig, { stage }) => {
 
       // Add ignored patterns to reduce watched directories
         webpackConfig.watchOptions = {
@@ -60,6 +60,38 @@ const webpackConfig = {
             '**/public/**',
         ],
       };
+
+      // Silence known bad sourcemap warnings from tailwind-merge in node_modules
+      webpackConfig.ignoreWarnings = [
+        ...(webpackConfig.ignoreWarnings || []),
+        /Failed to parse source map.*tailwind-merge/,
+      ];
+
+      // Production optimizations
+      if (stage === 'production') {
+        // Optimize chunk splitting for better caching
+        webpackConfig.optimization = webpackConfig.optimization || {};
+        webpackConfig.optimization.splitChunks = {
+          ...webpackConfig.optimization.splitChunks,
+          chunks: 'all',
+          cacheGroups: {
+            ...webpackConfig.optimization.splitChunks?.cacheGroups,
+            // Separate vendor chunks for better caching
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            // Common chunks that are reused
+            common: {
+              minChunks: 2,
+              priority: 5,
+              reuseExistingChunk: true,
+            },
+          },
+        };
+      }
 
       // Add health check plugin to webpack if enabled
       if (config.enableHealthCheck && healthPluginInstance) {
